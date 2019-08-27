@@ -40,18 +40,18 @@ after_success:
   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
   - eval $(aws ecr get-login --no-include-email --region ap-south-1)
 
-  - docker build -t multi-client ./client
+  - docker build -t multi-client ./fibonacci/client
   - docker tag multi-client:latest 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-client:latest
   - docker push 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-client:latest
 
-  - docker build -t multi-worker ./worker
+  - docker build -t multi-worker ./fibonacci/worker
   - docker tag multi-worker:latest 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-worker:latest
   - docker push 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-worker:latest
 
-  - docker build -t multi-server ./server
+  - docker build -t multi-server ./fibonacci/server
   - docker tag multi-server:latest 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-server:latest
   - docker push 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-server:latest
 
-  - docker build -t multi-nginx ./nginx
+  - docker build -t multi-nginx ./fibonacci/nginx
   - docker tag multi-nginx:latest 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-nginx:latest
   - docker push 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-nginx:latest
