@@ -1,21 +1,57 @@
+# YML for frontend folder
+# sudo: required
+# services:
+#   - docker
+
+# before_install:
+#   - docker build -t docker-react -f ./frontend/Dockerfile.dev ./frontend/
+
+# script:
+#   - docker run docker-react npm run test -- --coverage
+
+# deploy:
+#   provider: elasticbeanstalk
+#   region: "us-east-1"
+#   app: "docker-react"
+#   env: "Docker-react-env"
+#   bucket-name: "elasticbeanstalk-us-east-1-30172668388"
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key:
+#     secure: "$AWS_SECRET_KEY"
+
+# YML for fibonacci folder
 sudo: required
+language: python
 services:
   - docker
 
 before_install:
-  - docker build -t docker-react -f ./frontend/Dockerfile.dev ./frontend/
+  - docker build -t skyuppercut/docker-fibonacci -f ./fibonacci/client/Dockerfile.dev ./fibonacci/client/
 
 script:
-  - docker run docker-react npm run test -- --coverage
+  - docker run -e CI=true skyuppercut/docker-fibonacci npm run test -- --coverage
 
-deploy:
-  provider: elasticbeanstalk
-  region: "us-east-1"
-  app: "docker-react"
-  env: "Docker-react-env"
-  bucket-name: "elasticbeanstalk-us-east-1-30172668388"
-  on:
-    branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key:
-    secure: "$AWS_SECRET_KEY"
+after_success:
+  # Install aws-cli 
+  - docker --version
+  - pip install awscli # install aws cli w/o sudo
+  - export PATH=$PATH:$HOME/.local/bin # put aws in the path
+  - eval $(aws ecr get-login --no-include-email --region ap-south-1)
+
+  - docker build -t multi-client ./client
+  - docker tag multi-client:latest 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-client:latest
+  - docker push 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-client:latest
+
+  - docker build -t multi-worker ./worker
+  - docker tag multi-worker:latest 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-worker:latest
+  - docker push 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-worker:latest
+
+  - docker build -t multi-server ./server
+  - docker tag multi-server:latest 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-server:latest
+  - docker push 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-server:latest
+
+  - docker build -t multi-nginx ./nginx
+  - docker tag multi-nginx:latest 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-nginx:latest
+  - docker push 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-nginx:latest
