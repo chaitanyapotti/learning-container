@@ -55,3 +55,16 @@ after_success:
   - docker build -t multi-nginx ./fibonacci/nginx
   - docker tag multi-nginx:latest 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-nginx:latest
   - docker push 703476792259.dkr.ecr.ap-south-1.amazonaws.com/multi-nginx:latest
+
+deploy:
+  provider: elasticbeanstalk
+  region: ap-south-1
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-ap-south-1-703476792259
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: 
+    secure: "$AWS_SECRET_ACCESS_KEY"
