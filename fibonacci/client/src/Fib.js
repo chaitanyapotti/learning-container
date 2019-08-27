@@ -16,23 +16,23 @@ class Fib extends Component {
         this.fetchIndexes();
     }
 
-    async fetchValues() {
+    fetchValues = async () => {
         const values = await axios.get("/api/values/current");
         this.setState({values: values.data});
     }
 
-    async fetchIndexes() {
+    fetchIndexes = async () => {
         const indexes = await axios.get("/api/values/all");
         this.setState({
             seenIndexes: indexes.data
         })
     }
 
-    renderSeenIndexes() {
+    renderSeenIndexes = () => {
         return this.state.seenIndexes.map(({number}) => number).join(',')
     }
 
-    renderValues() {
+    renderValues = () => {
         const entries = [];
         for(let key in this.state.values) {
             entries.push(
@@ -44,7 +44,7 @@ class Fib extends Component {
         return entries;
     }
 
-    async handleSubmit(e) {
+    handleSubmit = async (e) => {
         e.preventDefault();
         await axios.post("/api/values", {
             index: this.state.index
